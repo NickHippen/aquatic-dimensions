@@ -1,0 +1,5 @@
+name: AquaticDimensions
+main: net.infernalrealms.aquatic_dimensions.AquaticDimensionsPlugin
+version: 0.1a
+api-version: 1.14
+commands:
