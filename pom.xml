@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.infernalrealms</groupId>
-	<artifactId>aquatic-dimensions</artifactId>
+	<artifactId>aquatic_dimensions</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -32,16 +32,34 @@
 			<id>bungeecord-repo</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
+		<repository>
+			<id>papermc</id>
+			<url>https://papermc.io/repo/repository/maven-public/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
-		<!-- Spigot -->
+		<!-- PaperMC -->
 		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot-api</artifactId>
+			<groupId>com.destroystokyo.paper</groupId>
+			<artifactId>paper-api</artifactId>
 			<version>${spigot-version}</version>
 			<scope>provided</scope>
 		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>io.papermc</groupId> -->
+<!-- 			<artifactId>paperlib</artifactId> -->
+<!-- 			<version>1.0.2</version> -->
+<!-- 			<scope>compile</scope> -->
+<!-- 		</dependency> -->
+		
+		<!-- Spigot -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.spigotmc</groupId> -->
+<!-- 			<artifactId>spigot-api</artifactId> -->
+<!-- 			<version>${spigot-version}</version> -->
+<!-- 			<scope>provided</scope> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit</artifactId>
@@ -74,14 +92,61 @@
 
 	<build>
 		<plugins>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-jar-plugin</artifactId> -->
+<!-- 				<version>2.3.1</version> -->
+<!-- 				<configuration> -->
+<!-- 					<outputDirectory>${build.outputDirectory}</outputDirectory> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
+				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
 					<outputDirectory>${build.outputDirectory}</outputDirectory>
 				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-shade-plugin</artifactId> -->
+<!-- 				<version>3.1.1</version> -->
+<!-- 				<configuration> -->
+<!-- 					<dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation> -->
+<!-- 					<relocations> -->
+<!-- 						<relocation> -->
+<!-- 							<pattern>io.papermc.lib</pattern> -->
+<!-- 							<shadedPattern>${project.name}.paperlib</shadedPattern> -->
+<!-- 						</relocation> -->
+<!-- 					</relocations> -->
+<!-- 					<outputDirectory>${build.outputDirectory}</outputDirectory> -->
+<!-- 				</configuration> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<phase>package</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>shade</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<excludes> -->
+<!-- 								<exclude>${project.groupId}.${project.artifactId}.*</exclude> -->
+<!-- 							</excludes> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
 		</plugins>
 	</build>
 </project>

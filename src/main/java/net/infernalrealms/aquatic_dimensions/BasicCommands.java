@@ -36,7 +36,14 @@ public class BasicCommands implements CommandExecutor {
 			World world = WorldUtil.loadInstancedWorld(new File("fake_dungeon"));
 			sw.stop();
 			player.sendMessage("Created new world! (" + sw.elapsed(TimeUnit.MILLISECONDS) + "ms)");
-			player.teleport(world.getSpawnLocation());
+//			player.teleport(world.getSpawnLocation());
+			player.teleportAsync(world.getSpawnLocation()).thenAccept((result) -> {
+				if (result) {
+					player.sendMessage("Welcome to the dungeon instance!");
+				} else {
+					player.sendMessage("Soemthing went wrong when teleporting to the dungeon instance.");
+				}
+			});
 			return true;
 		}
 		return false;

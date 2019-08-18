@@ -2,6 +2,7 @@ package net.infernalrealms.aquatic_dimensions;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.infernalrealms.aquatic_dimensions.player.PlayerListener;
 import net.infernalrealms.aquatic_dimensions.worlds.WorldListener;
 
 public class AquaticDimensionsPlugin extends JavaPlugin {
@@ -29,6 +30,7 @@ public class AquaticDimensionsPlugin extends JavaPlugin {
 	
 	private void setupListeners() {
 		getServer().getPluginManager().registerEvents(new WorldListener(), this);
+		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 	}
 	
 	public static AquaticDimensionsPlugin getPlugin() {
