@@ -2,15 +2,21 @@ package net.infernalrealms.aquatic_dimensions;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.infernalrealms.aquatic_dimensions.worlds.WorldListener;
+
 public class AquaticDimensionsPlugin extends JavaPlugin {
 
+	private static AquaticDimensionsPlugin plugin;
+	
 	@Override
 	public void onLoad() {
+		plugin = this;
 	}
 
 	@Override
 	public void onEnable() {
 		setupCommands();
+		setupListeners();
 	}
 
 	@Override
@@ -18,7 +24,15 @@ public class AquaticDimensionsPlugin extends JavaPlugin {
 	}
 
 	private void setupCommands() {
-		this.getCommand("spawnmob").setExecutor(new BasicCommands());
+		getCommand("ad").setExecutor(new BasicCommands());
+	}
+	
+	private void setupListeners() {
+		getServer().getPluginManager().registerEvents(new WorldListener(), this);
+	}
+	
+	public static AquaticDimensionsPlugin getPlugin() {
+		return plugin;
 	}
 
 }

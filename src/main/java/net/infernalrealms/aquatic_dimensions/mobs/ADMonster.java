@@ -27,7 +27,7 @@ public class ADMonster extends EntityCreature implements AquaticDimensionsEntity
 	private List<Entity> nameTagComponents;
 
 	public ADMonster(EntityTypes<?> entitytypes, World world) {
-        super(EntityTypes.RAVAGER, world);
+        super(EntityTypes.PARROT, world);
     }
 	
 	@Override
