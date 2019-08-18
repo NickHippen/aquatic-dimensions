@@ -3,6 +3,6 @@ main: net.infernalrealms.aquatic_dimensions.AquaticDimensionsPlugin
 version: 0.1a
 api-version: 1.14
 commands:
-  spawnmob:
-    description: Test spawn mobs
-    usage: /spawnmob
+  ad:
+    description: Test command
+    usage: /ad
