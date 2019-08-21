@@ -2,6 +2,7 @@ package net.infernalrealms.aquatic_dimensions;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.infernalrealms.aquatic_dimensions.mobs.MonsterCache;
 import net.infernalrealms.aquatic_dimensions.player.PlayerListener;
 import net.infernalrealms.aquatic_dimensions.worlds.WorldListener;
 

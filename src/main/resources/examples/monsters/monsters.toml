@@ -1,0 +1,13 @@
+[TEST_ZOMBIE]
+name = "Test Monster"
+type = "zombie"
+health = 20
+damage = 1
+speed = 0.2
+
+[TEST_ARMOR_STAND]
+name = "Test monster 2"
+type = "armor_stand"
+health = 20
+damage = 1
+speed = 0.2
