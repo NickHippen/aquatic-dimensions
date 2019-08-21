@@ -1,4 +1,4 @@
-package net.infernalrealms.aquatic_dimensions.mobs;
+package net.infernalrealms.aquatic_dimensions.mobs.types;
 
 import java.util.Map;
 
@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.types.Type;
 
+import net.infernalrealms.aquatic_dimensions.mobs.MonsterData;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DataConverterRegistry;
 import net.minecraft.server.v1_14_R1.DataConverterTypes;
@@ -19,19 +20,26 @@ import net.minecraft.server.v1_14_R1.IRegistry;
 import net.minecraft.server.v1_14_R1.SharedConstants;
 import net.minecraft.server.v1_14_R1.WorldServer;
 
-public enum CustomEntityType {
+public enum ADEntityType {
 	
-	CUSTOM_ZOMBIE_OLD("customzombie_old", "zombie", CustomZombie_Old::new),
-	AD_MONSTER("aquatic_dimensions_monster", "zombie", ADMonster::new), // TODO What are the affects of the baseName being zombie?
+	// TODO What are the affects of the baseName being zombie always?
 	NAME_TAG_AS("name_tag_armor_stand", "armor_stand", NameTagArmorStand::new),
-	NAME_TAG_SLIME("name_tag_slime", "slime", NameTagSlime::new);
+	NAME_TAG_SLIME("name_tag_slime", "slime", NameTagSlime::new),
+//	MONSTER("ad_monster", "zombie", ADMonster::new),
+	ARMOR_STAND("ad_armor_stand", "zombie", ADArmorStand::new),
+	ZOMBIE("ad_zombie", "zombie", ADZombie::new),
+	;
 
 	private String name;
 	private String baseName;
+	/**
+	 * Interface with body:
+	 * T create(EntityTypes<T> entitytypes, World world);
+	 */
 	private b<?> entityCon;
 	private EntityTypes<?> typesLoc;
 	
-	private CustomEntityType(String name, String baseName, b<?> entityCon) {
+	private ADEntityType(String name, String baseName, b<?> entityCon) {
 		this.name = name;
 		this.baseName = baseName;
 		this.entityCon = entityCon;
@@ -47,21 +55,22 @@ public enum CustomEntityType {
 		typesLoc = IRegistry.a(IRegistry.ENTITY_TYPE, name, a.a(name));
 	}
 	
-	public static org.bukkit.entity.Entity spawnEntitiy(CustomEntityType cet, Location location) {
-		return spawnEntitiy(cet, location, null);
+	public static org.bukkit.entity.Entity spawnEntity(MonsterData monsterData, Location location) {
+		ADEntityType et = ADEntityType.valueOf(monsterData.getType().toUpperCase());
+		return spawnEntity(et, location, monsterData);
 	}
 	
-	public static org.bukkit.entity.Entity spawnEntitiy(CustomEntityType cet, Location location, CustomMobData mobData) {
+	protected static org.bukkit.entity.Entity spawnEntity(ADEntityType et, Location location, MonsterData monsterData) {
 		WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
 
-		Entity entity = cet.typesLoc.b(world, null, null, null,
+		Entity entity = et.typesLoc.b(world, null, null, null,
 				new BlockPosition(location.getX(), location.getY(), location.getZ()), null, false, false);
 		if (!world.addEntity(entity)) {
 			// LOG THIS
 			return null;
 		}
-		AquaticDimensionsEntity aquaticDimEntity = (AquaticDimensionsEntity) entity;
-		aquaticDimEntity.init(mobData);
+		ADEntity adEntity = (ADEntity) entity;
+		adEntity.init(monsterData);
 		return (org.bukkit.entity.Entity) entity.getBukkitEntity();
 	}
 	

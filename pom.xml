@@ -80,6 +80,20 @@
 			<artifactId>maven-jar-plugin</artifactId>
 			<version>3.0.2</version>
 		</dependency>
+		
+		<!-- Reflection -->
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>joor-java-8</artifactId>
+			<version>0.9.7</version>
+		</dependency>
+		
+		<!-- Configuration -->
+		<dependency>
+			<groupId>com.electronwill.night-config</groupId>
+			<artifactId>toml</artifactId>
+			<version>3.6.0</version>
+		</dependency>
 
 		<!-- Testing -->
 		<dependency>
