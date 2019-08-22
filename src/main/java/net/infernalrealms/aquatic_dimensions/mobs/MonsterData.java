@@ -9,6 +9,7 @@ public class MonsterData {
 	private double health;
 	private double damage;
 	private double speed;
+	private MonsterEquipment equips;
 
 	public String getName() {
 		return name;
@@ -50,6 +51,14 @@ public class MonsterData {
 		this.speed = speed;
 	}
 	
+	public MonsterEquipment getEquips() {
+		return equips;
+	}
+
+	public void setEquips(MonsterEquipment equips) {
+		this.equips = equips;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

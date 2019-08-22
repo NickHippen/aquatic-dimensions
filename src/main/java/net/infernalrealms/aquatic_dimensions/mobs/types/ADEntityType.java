@@ -28,6 +28,7 @@ public enum ADEntityType {
 //	MONSTER("ad_monster", "zombie", ADMonster::new),
 	ARMOR_STAND("ad_armor_stand", "zombie", ADArmorStand::new),
 	ZOMBIE("ad_zombie", "zombie", ADZombie::new),
+	SKELETON("ad_skeleton", "zombie", ADSkeleton::new),
 	;
 
 	private String name;
