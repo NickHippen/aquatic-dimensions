@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.EntityEquipment;
 
 import net.infernalrealms.aquatic_dimensions.mobs.MonsterData;
+import net.infernalrealms.aquatic_dimensions.mobs.MonsterEquipment;
+import net.infernalrealms.aquatic_dimensions.util.ItemStackUtil;
 import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.EntityCreature;
 import net.minecraft.server.v1_14_R1.EntityHuman;
@@ -45,6 +49,7 @@ public class ADMonster extends EntityCreature implements ADEntity {
 	public void init(MonsterData monsterData) {
 		setupNametag(monsterData);
 		setupAttributes(monsterData);
+		setupEquipment(monsterData);
 	}
 	
 	private void setupNametag(MonsterData monsterData) {
@@ -61,6 +66,20 @@ public class ADMonster extends EntityCreature implements ADEntity {
 		getAttributeMap().a(GenericAttributes.MAX_HEALTH).setValue(monsterData.getHealth());
 		getAttributeMap().a(GenericAttributes.ATTACK_DAMAGE).setValue(monsterData.getDamage());
 		getAttributeMap().a(GenericAttributes.MOVEMENT_SPEED).setValue(monsterData.getSpeed());
+	}
+	
+	private void setupEquipment(MonsterData monsterData) {
+		if (monsterData.getEquips() == null) {
+			return;
+		}
+		EntityEquipment equips = ((LivingEntity) getBukkitEntity()).getEquipment();
+		MonsterEquipment monsterEquips = monsterData.getEquips();
+		equips.setHelmet(ItemStackUtil.generateFromString(monsterEquips.getHelmet()));
+		equips.setChestplate(ItemStackUtil.generateFromString(monsterEquips.getChestplate()));
+		equips.setLeggings(ItemStackUtil.generateFromString(monsterEquips.getLeggings()));
+		equips.setBoots(ItemStackUtil.generateFromString(monsterEquips.getBoots()));
+		equips.setItemInMainHand(ItemStackUtil.generateFromString(monsterEquips.getMainHand()));
+		equips.setItemInOffHand(ItemStackUtil.generateFromString(monsterEquips.getOffHand()));
 	}
 	
 	@Override
