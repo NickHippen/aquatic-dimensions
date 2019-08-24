@@ -27,8 +27,10 @@ public enum ADEntityType {
 	NAME_TAG_SLIME("name_tag_slime", "slime", NameTagSlime::new),
 //	MONSTER("ad_monster", "zombie", ADMonster::new),
 	ARMOR_STAND("ad_armor_stand", "zombie", ADArmorStand::new),
-	ZOMBIE("ad_zombie", "zombie", ADZombie::new),
+	CREEPER("ad_creeper", "zombie", ADCreeper::new),
+	ENDER_DRAGON("ad_ender_dragon", "zombie", ADEnderDragon::new),
 	SKELETON("ad_skeleton", "zombie", ADSkeleton::new),
+	ZOMBIE("ad_zombie", "zombie", ADZombie::new),
 	;
 
 	private String name;
