@@ -9,6 +9,7 @@ public class MonsterData {
 	private double health;
 	private double damage;
 	private double speed;
+	private boolean archer;
 	private MonsterEquipment equips;
 
 	public String getName() {
@@ -51,6 +52,14 @@ public class MonsterData {
 		this.speed = speed;
 	}
 	
+	public boolean isArcher() {
+		return archer;
+	}
+
+	public void setArcher(boolean archer) {
+		this.archer = archer;
+	}
+
 	public MonsterEquipment getEquips() {
 		return equips;
 	}

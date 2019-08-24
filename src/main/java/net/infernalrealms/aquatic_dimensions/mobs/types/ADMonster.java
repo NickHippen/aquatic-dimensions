@@ -9,28 +9,38 @@ import org.bukkit.inventory.EntityEquipment;
 
 import net.infernalrealms.aquatic_dimensions.mobs.MonsterData;
 import net.infernalrealms.aquatic_dimensions.mobs.MonsterEquipment;
+import net.infernalrealms.aquatic_dimensions.mobs.ai.PathfinderGoalBowShoot;
 import net.infernalrealms.aquatic_dimensions.util.ItemStackUtil;
 import net.minecraft.server.v1_14_R1.DamageSource;
+import net.minecraft.server.v1_14_R1.EntityArrow;
 import net.minecraft.server.v1_14_R1.EntityCreature;
 import net.minecraft.server.v1_14_R1.EntityHuman;
 import net.minecraft.server.v1_14_R1.EntityIronGolem;
+import net.minecraft.server.v1_14_R1.EntityLiving;
 import net.minecraft.server.v1_14_R1.EntityMonster;
-import net.minecraft.server.v1_14_R1.EntityPigZombie;
+import net.minecraft.server.v1_14_R1.EntitySnowball;
 import net.minecraft.server.v1_14_R1.EntityTurtle;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EntityVillagerAbstract;
 import net.minecraft.server.v1_14_R1.GenericAttributes;
 import net.minecraft.server.v1_14_R1.IAttribute;
+import net.minecraft.server.v1_14_R1.IRangedEntity;
+import net.minecraft.server.v1_14_R1.ItemStack;
+import net.minecraft.server.v1_14_R1.Items;
+import net.minecraft.server.v1_14_R1.MathHelper;
 import net.minecraft.server.v1_14_R1.PathfinderGoalHurtByTarget;
 import net.minecraft.server.v1_14_R1.PathfinderGoalLookAtPlayer;
 import net.minecraft.server.v1_14_R1.PathfinderGoalMeleeAttack;
 import net.minecraft.server.v1_14_R1.PathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_14_R1.PathfinderGoalRandomLookaround;
 import net.minecraft.server.v1_14_R1.PathfinderGoalRandomStrollLand;
+import net.minecraft.server.v1_14_R1.ProjectileHelper;
+import net.minecraft.server.v1_14_R1.SoundEffects;
 import net.minecraft.server.v1_14_R1.World;
 
-public class ADMonster extends EntityCreature implements ADEntity {
-	
+public class ADMonster extends EntityCreature implements ADEntity, IRangedEntity {
+
+	private MonsterData monsterData;
 	private List<Entity> nameTagComponents;
 
 	/**
@@ -47,12 +57,14 @@ public class ADMonster extends EntityCreature implements ADEntity {
 	
 	@Override
 	public void init(MonsterData monsterData) {
-		setupNametag(monsterData);
-		setupAttributes(monsterData);
-		setupEquipment(monsterData);
+		this.monsterData = monsterData;
+		setupNametag();
+		setupAttributes();
+		setupEquipment();
+		setupAI();
 	}
 	
-	private void setupNametag(MonsterData monsterData) {
+	private void setupNametag() {
 		nameTagComponents = new ArrayList<>();
 		Entity as = ADEntityType.spawnEntity(ADEntityType.NAME_TAG_AS, getBukkitEntity().getLocation(), monsterData);
 		nameTagComponents.add(as);
@@ -62,13 +74,13 @@ public class ADMonster extends EntityCreature implements ADEntity {
 		slime.addPassenger(as);
 	}
 	
-	private void setupAttributes(MonsterData monsterData) {
+	private void setupAttributes() {
 		getAttributeMap().a(GenericAttributes.MAX_HEALTH).setValue(monsterData.getHealth());
 		getAttributeMap().a(GenericAttributes.ATTACK_DAMAGE).setValue(monsterData.getDamage());
 		getAttributeMap().a(GenericAttributes.MOVEMENT_SPEED).setValue(monsterData.getSpeed());
 	}
 	
-	private void setupEquipment(MonsterData monsterData) {
+	private void setupEquipment() {
 		if (monsterData.getEquips() == null) {
 			return;
 		}
@@ -80,6 +92,25 @@ public class ADMonster extends EntityCreature implements ADEntity {
 		equips.setBoots(ItemStackUtil.generateFromString(monsterEquips.getBoots()));
 		equips.setItemInMainHand(ItemStackUtil.generateFromString(monsterEquips.getMainHand()));
 		equips.setItemInOffHand(ItemStackUtil.generateFromString(monsterEquips.getOffHand()));
+	}
+	
+	private void setupAI() {
+		// Goal Selectors
+		this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
+        this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
+        if (monsterData.isArcher()) {
+        	this.goalSelector.a(4, new PathfinderGoalBowShoot<ADMonster>(this, 1.0D, 20, 15.0F));
+        } else {
+        	this.goalSelector.a(2, new PathfinderGoalMeleeAttack(this, 1.0D, false));
+        }
+        this.goalSelector.a(7, new PathfinderGoalRandomStrollLand(this, 1.0D));
+        
+        // Target selectors
+        this.targetSelector.a(1, (new PathfinderGoalHurtByTarget(this, new Class[0])));
+        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>(this, EntityMonster.class, true));
+        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
+        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityIronGolem.class, true));
+        this.targetSelector.a(5, new PathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, true, false, EntityTurtle.bz));
 	}
 	
 	@Override
@@ -126,23 +157,24 @@ public class ADMonster extends EntityCreature implements ADEntity {
 	
 	@Override
 	protected void initPathfinder() {
-//		this.goalSelector.a(4, new EntityZombie.a(this, 1.0D, 3));
-        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
-        this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
-        this.l();
 	}
 	
-	protected void l() {
-		this.goalSelector.a(2, new PathfinderGoalMeleeAttack(this, 1.0D, false));
-//        this.goalSelector.a(2, new PathfinderGoalZombieAttack(this, 1.0D, false));
-//        this.goalSelector.a(6, new PathfinderGoalMoveThroughVillage(this, 1.0D, true, 4, this::ed));
-        this.goalSelector.a(7, new PathfinderGoalRandomStrollLand(this, 1.0D));
-        this.targetSelector.a(1, (new PathfinderGoalHurtByTarget(this, new Class[0])).a(EntityPigZombie.class));
-//        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); // TODO Uncomment when done testing
-        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>(this, EntityMonster.class, true));
-        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
-        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityIronGolem.class, true));
-        this.targetSelector.a(5, new PathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, true, false, EntityTurtle.bz));
-    }
+	/**
+	 * Shoot arrow
+	 * (basically just copied from EntitySkeletonAbstract NMS; craftbukkit event calling removed)
+	 */
+	@Override
+	public void a(EntityLiving entityliving, float f) {
+		ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
+        EntityArrow entityarrow = ProjectileHelper.a(this, itemstack, f);
+        double d0 = entityliving.locX - this.locX;
+        double d1 = entityliving.getBoundingBox().minY + (double) (entityliving.getHeight() / 3.0F) - entityarrow.locY;
+        double d2 = entityliving.locZ - this.locZ;
+        double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
+
+        entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float) (14 - this.world.getDifficulty().a() * 4));
+        world.addEntity(entityarrow);
+        this.a(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+	}
 	
 }
